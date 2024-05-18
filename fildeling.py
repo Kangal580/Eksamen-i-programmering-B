@@ -5,15 +5,15 @@ import os
 import json
 import time
 
-# List of adjectives and nouns for random username generation
+# Liste over tillægsord og navneord til tilfældig brugernavngenerering
 ADJECTIVES = ['Hurtig', 'Smuk', 'Glad', 'Rolig', 'Langsom']
 NOUNS = ['Tiger', 'Hund', 'Kat', 'Haj', 'Ulv']
 
-# Function to generate a random username
+# Funktion til at generere et tilfældigt brugernavn
 def generate_username():
     return random.choice(ADJECTIVES) + random.choice(NOUNS)
 
-# Function to broadcast host details
+# Funktion til at udsende host oplysninger
 def broadcast_host_details(broadcast_port, main_port, username):
     broadcast_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     broadcast_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -27,14 +27,14 @@ def broadcast_host_details(broadcast_port, main_port, username):
         message = json.dumps(host_details)
         broadcast_socket.sendto(message.encode('utf-8'), ('<broadcast>', broadcast_port))
         print(f"Broadcasting: {message}")
-        time.sleep(2)  # Broadcast every 2 seconds
+        time.sleep(2)  # Udsend hver 2. sekund
 
-# Function to listen for broadcast messages
+# Funktion til at lytte efter udsendte beskeder
 def listen_for_broadcasts(broadcast_port):
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as listener_socket:
         listener_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         listener_socket.bind(('0.0.0.0', broadcast_port))
-        listener_socket.settimeout(10)  # Timeout after 10 seconds
+        listener_socket.settimeout(10)  # Timeout efter 10 sekunder
 
         try:
             while True:
@@ -46,15 +46,15 @@ def listen_for_broadcasts(broadcast_port):
                 print(f"{message['username']} at {message['ip']}:{message['port']}")
                 choice = input("Do you want to connect to this host? (yes/no): ").strip().lower()
                 if choice == "yes":
-                    return message  # Return the selected host
+                    return message  # Returner den valgte vært
                 else:
-                    continue  # Continue listening for more hosts
+                    continue  # Fortsæt med at lytte efter flere hosts
         except socket.timeout:
             pass
 
-    return None  # Return None if no hosts were selected
+    return None  # Returner None hvis ingen værter blev valgt
 
-# Function to connect to a host server
+# Funktion til at oprette forbindelse til en host server
 def connect_to_host(host):
     host_ip = host['ip']
     port = host['port']
@@ -62,11 +62,11 @@ def connect_to_host(host):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((host_ip, port))
 
-    # Generate and send the client's username
+    # Generer og send klientens brugernavn
     client_username = generate_username()
     client.send(client_username.encode('utf-8'))
 
-    # Receive and display the server's username
+    # Modtag og vis værtens brugernavn
     server_username = client.recv(1024).decode('utf-8')
     print(f"Connected to host. Your username: {client_username}, Host's username: {server_username}")
 
@@ -76,14 +76,14 @@ def connect_to_host(host):
 
         response = client.recv(1024).decode('utf-8')
         if response == "FILE_FOUND":
-            file_data = client.recv(4096)  # Adjust buffer size as needed
+            file_data = client.recv(4096)  # Juster bufferstørrelsen efter behov
             with open(f"received_{file_name}", 'wb') as f:
                 f.write(file_data)
             print(f"File '{file_name}' received and saved as 'received_{file_name}'.")
         else:
             print(f"File '{file_name}' not found on the host.")
 
-# Function to handle client connection and file transfer
+# Funktion til at håndtere klientforbindelse og filoverførsel
 def handle_client(client_socket, address, server_username):
     print(f"[+] {address} connected.")
     client_username = client_socket.recv(1024).decode('utf-8')
@@ -92,7 +92,7 @@ def handle_client(client_socket, address, server_username):
 
     while True:
         try:
-            # Receive file request
+            # Modtag filanmodning
             file_name = client_socket.recv(1024).decode('utf-8')
             if not file_name:
                 break
@@ -113,22 +113,22 @@ def handle_client(client_socket, address, server_username):
     print(f"[-] {address} disconnected.")
     client_socket.close()
 
-# Function to start the server
+# Funktion til at starte serveren
 def start_server(port):
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind(('0.0.0.0', port))
     server.listen(5)
 
-    # Generate and display the server's username
+    # Generer og vis serverens brugernavn
     server_username = generate_username()
     print(f"Server's username: {server_username}")
 
-    # Start broadcasting host details
+    # Start udsendelse af host oplysninger
     broadcast_thread = threading.Thread(target=broadcast_host_details, args=(5001, port, server_username))
     broadcast_thread.start()
     print("Broadcasting host details...")
 
-    # Get and display the local IP address
+    # Hent og vis den lokale IP-adresse
     local_ip = socket.gethostbyname(socket.gethostname())
     print(f"[+] Server started on {local_ip}:{port}. Waiting for connections...")
 
@@ -138,8 +138,8 @@ def start_server(port):
         client_handler.start()
 
 if __name__ == "__main__":
-    broadcast_port = 5001  # Port for broadcasting and listening for hosts
-    main_port = 5000  # Main port for connections
+    broadcast_port = 5001  # Port til udsendelse og modtagelse af hosts
+    main_port = 5000  # Hovedport til forbindelser
 
     mode = input("Do you want to host or connect? (host/connect): ").strip().lower()
     if mode == "host":
