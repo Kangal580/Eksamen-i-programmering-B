@@ -83,7 +83,7 @@ def connect_to_host(host):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((host_ip, port))
 
-    # Generer og send klientens brugernavn
+    # Generate and send the client's username
     client_username = generate_username()
     encrypted_username = public_key.encrypt(
         client_username.encode('utf-8'),
@@ -94,11 +94,13 @@ def connect_to_host(host):
         )
     )
     client.send(encrypted_username)
+    print(f"Client's encrypted username: {encrypted_username}")
 
-    # Modtag og vis serverens brugernavn
+    # Receive and display the server's username
     server_username_encrypted = client.recv(256)
     server_username = server_username_encrypted.decode('utf-8')
     print(f"Connected to host. Your username: {client_username}, Host's username: {server_username}")
+
 
     while True:
         file_name = input("Enter the name of the .txt file to request: ")
@@ -134,6 +136,7 @@ def handle_client(client_socket, address, server_username, private_key):
     ).decode('utf-8')
     client_socket.send(server_username.encode('utf-8'))
     print(f"Client's username: {client_username}")
+    print(f"Client's encrypted username: {encrypted_client_username}")
 
     while True:
         try:
@@ -157,12 +160,14 @@ def handle_client(client_socket, address, server_username, private_key):
             else:
                 client_socket.send("FILE_NOT_FOUND".encode('utf-8'))
                 print(f"File '{file_name}' not found for {client_username} at {address}.")
+            print(f"Encrypted file name received: {encrypted_file_name}")
 
         except ConnectionResetError:
             break
 
     print(f"[-] {address} disconnected.")
     client_socket.close()
+
 
 # Funktion til at starte serveren
 def start_server(port):
