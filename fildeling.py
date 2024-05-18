@@ -5,7 +5,7 @@ import os
 import json
 import time
 
-# Liste over tillægsord og navneord til tilfældig brugernavngenerering
+# Liste af adjektiver og substantiver til tilfældig brugernavngenerering
 ADJECTIVES = ['Hurtig', 'Smuk', 'Glad', 'Rolig', 'Langsom']
 NOUNS = ['Tiger', 'Hund', 'Kat', 'Haj', 'Ulv']
 
@@ -19,17 +19,13 @@ def broadcast_host_details(broadcast_port, main_port, username):
     broadcast_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 
     while True:
-        host_details = {
-            'username': username,
-            'ip': socket.gethostbyname(socket.gethostname()),
-            'port': main_port
-        }
+        host_details = {'username': username, 'ip': socket.gethostbyname(socket.gethostname()), 'port': main_port}
         message = json.dumps(host_details)
         broadcast_socket.sendto(message.encode('utf-8'), ('<broadcast>', broadcast_port))
         print(f"Broadcasting: {message}")
         time.sleep(2)  # Udsend hver 2. sekund
 
-# Funktion til at lytte efter udsendte beskeder
+# Funktion til at lytte efter udsendelsesbeskeder
 def listen_for_broadcasts(broadcast_port):
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as listener_socket:
         listener_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -40,24 +36,21 @@ def listen_for_broadcasts(broadcast_port):
             while True:
                 data, _ = listener_socket.recvfrom(1024)
                 message = json.loads(data.decode('utf-8'))
-                ip = message['ip']
-                print(f"Received broadcast: {message}")
-                print("Available host:")
-                print(f"{message['username']} at {message['ip']}:{message['port']}")
+                ip, username, port = message['ip'], message['username'], message['port']
+                print(f"Received broadcast: {message}\nAvailable host: {username} at {ip}:{port}")
                 choice = input("Do you want to connect to this host? (yes/no): ").strip().lower()
                 if choice == "yes":
-                    return message  # Returner den valgte vært
+                    return message  # Returner den valgte host
                 else:
                     continue  # Fortsæt med at lytte efter flere hosts
         except socket.timeout:
             pass
 
-    return None  # Returner None hvis ingen værter blev valgt
+    return None  # Returner None hvis ingen hosts blev valgt
 
-# Funktion til at oprette forbindelse til en host server
+# Funktion til at oprette forbindelse til en host
 def connect_to_host(host):
-    host_ip = host['ip']
-    port = host['port']
+    host_ip, port = host['ip'], host['port']
 
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((host_ip, port))
@@ -66,7 +59,7 @@ def connect_to_host(host):
     client_username = generate_username()
     client.send(client_username.encode('utf-8'))
 
-    # Modtag og vis værtens brugernavn
+    # Modtag og vis serverens brugernavn
     server_username = client.recv(1024).decode('utf-8')
     print(f"Connected to host. Your username: {client_username}, Host's username: {server_username}")
 
@@ -76,9 +69,8 @@ def connect_to_host(host):
 
         response = client.recv(1024).decode('utf-8')
         if response == "FILE_FOUND":
-            file_data = client.recv(4096)  # Juster bufferstørrelsen efter behov
             with open(f"received_{file_name}", 'wb') as f:
-                f.write(file_data)
+                f.write(client.recv(4096))  # Juster bufferstørrelsen efter behov
             print(f"File '{file_name}' received and saved as 'received_{file_name}'.")
         else:
             print(f"File '{file_name}' not found on the host.")
@@ -100,8 +92,7 @@ def handle_client(client_socket, address, server_username):
             if os.path.exists(file_name):
                 client_socket.send("FILE_FOUND".encode('utf-8'))
                 with open(file_name, 'rb') as f:
-                    file_data = f.read()
-                    client_socket.send(file_data)
+                    client_socket.send(f.read())
                 print(f"File '{file_name}' sent to {client_username} at {address}.")
             else:
                 client_socket.send("FILE_NOT_FOUND".encode('utf-8'))
@@ -138,8 +129,7 @@ def start_server(port):
         client_handler.start()
 
 if __name__ == "__main__":
-    broadcast_port = 5001  # Port til udsendelse og modtagelse af hosts
-    main_port = 5000  # Hovedport til forbindelser
+    broadcast_port, main_port = 5001, 5000
 
     mode = input("Do you want to host or connect? (host/connect): ").strip().lower()
     if mode == "host":
