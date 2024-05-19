@@ -48,12 +48,12 @@ Sørg for, at host serveren kører og udsender sine detaljer. Tjek også dine ne
 #### Q7: Hvorfor kan jeg ikke bruge denne applikation på skolens netværk?
 
 Der kan være flere grunde til, at du ikke kan bruge applikationen på skolens netværk
-    - Netværksrestriktioner: Skolen har muligvis strenge firewall-regler og restriktioner for at forhindre uautoriseret adgang og sikre netværkets sikkerhed.
-    - Blokerede porte: De porte, vi bruger til udsendelse (5001) og hovedforbindelsen (5000), kan være blokeret af netværksadministratorerne.
-    - Administrative tilladelser: Kørsel af serverapplikationer kræver ofte administrative tilladelser, som du måske ikke har på skolens computere eller netværk.
-    - Netværksadresseoversættelse (NAT): Skole netværker bruger tit NAT, hvilket kan forårsage problemer med direkte peer-to-peer forbindelser.
-    - Sikkerhedspolitikker: Skolens IT-politikker kan forbyde brugen af brugerdefinerede netværksapplikationer for at forhindre sikkerhedsrisici.
-    - Udsendelsesproblemer: UDP-udsendelser kan være begrænset eller filtreret af netværksudstyr for at reducere unødvendig trafik.
+- Netværksrestriktioner: Skolen har muligvis strenge firewall-regler og restriktioner for at forhindre uautoriseret adgang og sikre netværkets sikkerhed.
+- Blokerede porte: De porte, vi bruger til udsendelse (5001) og hovedforbindelsen (5000), kan være blokeret af netværksadministratorerne.
+- Administrative tilladelser: Kørsel af serverapplikationer kræver ofte administrative tilladelser, som du måske ikke har på skolens computere eller netværk.
+- Netværksadresseoversættelse (NAT): Skole netværker bruger tit NAT, hvilket kan forårsage problemer med direkte peer-to-peer forbindelser.
+- Sikkerhedspolitikker: Skolens IT-politikker kan forbyde brugen af brugerdefinerede netværksapplikationer for at forhindre sikkerhedsrisici.
+- Udsendelsesproblemer: UDP-udsendelser kan være begrænset eller filtreret af netværksudstyr for at reducere unødvendig trafik.
 
 ![](https://s5.ezgif.com/tmp/ezgif-5-53536aae3c.gif)
 
