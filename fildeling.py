@@ -83,7 +83,7 @@ def connect_to_host(host):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((host_ip, port))
 
-    # Generate and send the client's username
+    # Generate og send clients navn
     client_username = generate_username()
     encrypted_username = public_key.encrypt(
         client_username.encode('utf-8'),
@@ -96,7 +96,7 @@ def connect_to_host(host):
     client.send(encrypted_username)
     print(f"Client's encrypted username: {encrypted_username}")
 
-    # Receive and display the server's username
+    # Modtag og vis serverens navn
     server_username_encrypted = client.recv(256)
     server_username = server_username_encrypted.decode('utf-8')
     print(f"Connected to host. Your username: {client_username}, Host's username: {server_username}")
