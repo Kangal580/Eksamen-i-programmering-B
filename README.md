@@ -70,7 +70,7 @@ Der kan være flere grunde til, at du ikke kan bruge applikationen på skolens n
 
  - Python Software Foundation: For at skabe og vedligeholde Python, programmeringssproget brugt til at bygge denne applikation.
 
- - PyCryptodome: For at levere et omfattende og sikkert kryptografisk bibliotek, som er ryggraden i vores krypteringsfunktioner.
+ - Cryptography: For at levere et omfattende og sikkert kryptografisk bibliotek, som er ryggraden i vores krypteringsfunktioner.
 
  - RSA Algoritmen: For den grundlæggende kryptografiske metode, der muliggør sikker dataoverførsel.
 
