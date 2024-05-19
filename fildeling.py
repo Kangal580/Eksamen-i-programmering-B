@@ -4,6 +4,7 @@ import random
 import os
 import json
 import time
+import base64
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
 
@@ -11,9 +12,11 @@ from cryptography.hazmat.primitives import serialization, hashes
 ADJECTIVES = ['Hurtig', 'Smuk', 'Glad', 'Rolig', 'Langsom']
 NOUNS = ['Tiger', 'Hund', 'Kat', 'Haj', 'Ulv']
 
+
 # Funktion til at generere et tilfældigt brugernavn
 def generate_username():
     return random.choice(ADJECTIVES) + random.choice(NOUNS)
+
 
 # Funktion til at generere RSA-nøgler
 def generate_rsa_keys():
@@ -24,6 +27,7 @@ def generate_rsa_keys():
     public_key = private_key.public_key()
     return private_key, public_key
 
+
 # Funktion til at serialisere offentlig nøgle
 def serialize_public_key(public_key):
     return public_key.public_bytes(
@@ -31,18 +35,31 @@ def serialize_public_key(public_key):
         format=serialization.PublicFormat.SubjectPublicKeyInfo
     )
 
+
 # Funktion til at deserialisere offentlig nøgle
 def deserialize_public_key(public_key_bytes):
     return serialization.load_pem_public_key(public_key_bytes)
 
+
 # Funktion til at udsende host oplysninger
-def broadcast_host_details(broadcast_port, main_port, username, public_key_bytes):
+def broadcast_host_details(broadcast_port, main_port, username, public_key, public_key_bytes):
     broadcast_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     broadcast_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 
     while True:
+        encrypted_username = public_key.encrypt(
+            username.encode('utf-8'),
+            padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                algorithm=hashes.SHA256(),
+                label=None
+            )
+        )
+        # Encode encrypted_username bytes objekt til Base64 strings
+        encrypted_username_base64 = base64.b64encode(encrypted_username).decode('utf-8')
+
         host_details = {
-            'username': username,
+            'username': encrypted_username_base64,
             'ip': socket.gethostbyname(socket.gethostname()),
             'port': main_port,
             'public_key': public_key_bytes.decode('utf-8')
@@ -51,6 +68,7 @@ def broadcast_host_details(broadcast_port, main_port, username, public_key_bytes
         broadcast_socket.sendto(message.encode('utf-8'), ('<broadcast>', broadcast_port))
         print(f"Broadcasting: {message}")
         time.sleep(2)  # Udsend hver 2. sekund
+
 
 # Funktion til at lytte efter udsendelsesbeskeder
 def listen_for_broadcasts(broadcast_port):
@@ -76,6 +94,7 @@ def listen_for_broadcasts(broadcast_port):
 
     return None  # Returner None hvis ingen hosts blev valgt
 
+
 # Funktion til at oprette forbindelse til en host
 def connect_to_host(host):
     host_ip, port, public_key = host['ip'], host['port'], host['public_key']
@@ -94,7 +113,6 @@ def connect_to_host(host):
             label=None
         )
     )
-    print(f"Plaintext client's username: {client_username}")
     print(f"Encrypted client's username: {encrypted_username}")
     client.send(encrypted_username)
 
@@ -124,6 +142,7 @@ def connect_to_host(host):
             print(f"File '{file_name}' received and saved as 'received_{file_name}'.")
         else:
             print(f"File '{file_name}' not found on the host.")
+
 
 # Funktion til at håndtere klientforbindelse og filoverførsel
 def handle_client(client_socket, address, server_username, private_key):
@@ -172,6 +191,7 @@ def handle_client(client_socket, address, server_username, private_key):
     print(f"[-] {address} disconnected.")
     client_socket.close()
 
+
 # Funktion til at starte serveren
 def start_server(port):
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -187,7 +207,8 @@ def start_server(port):
     print(f"Server's username: {server_username}")
 
     # Start udsendelse af host oplysninger
-    broadcast_thread = threading.Thread(target=broadcast_host_details, args=(5001, port, server_username, public_key_bytes))
+    broadcast_thread = threading.Thread(target=broadcast_host_details,
+                                        args=(5001, port, server_username, public_key, public_key_bytes))
     broadcast_thread.start()
     print("Broadcasting host details...")
 
@@ -197,8 +218,10 @@ def start_server(port):
 
     while True:
         client_socket, addr = server.accept()
-        client_handler = threading.Thread(target=handle_client, args=(client_socket, addr, server_username, private_key))
+        client_handler = threading.Thread(target=handle_client,
+                                          args=(client_socket, addr, server_username, private_key))
         client_handler.start()
+
 
 if __name__ == "__main__":
     broadcast_port, main_port = 5001, 5000
