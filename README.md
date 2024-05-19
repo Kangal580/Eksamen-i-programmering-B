@@ -60,7 +60,9 @@ Der kan være flere grunde til, at du ikke kan bruge applikationen på skolens n
   
 - Udsendelsesproblemer: UDP-udsendelser kan være begrænset eller filtreret af netværksudstyr for at reducere unødvendig trafik.
 
-![](https://s5.ezgif.com/tmp/ezgif-5-53536aae3c.gif)
+<div align="center">
+	<img src="![](https://s5.ezgif.com/tmp/ezgif-5-53536aae3c.gif)">
+</div>
 
 
 ## Anerkendelser📚
