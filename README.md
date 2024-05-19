@@ -62,7 +62,7 @@ Der kan være flere grunde til, at du ikke kan bruge applikationen på skolens n
 
 ##
 <p align="center">
-  <img src="https://s5.ezgif.com/tmp/ezgif-5-53536aae3c.gif" alt="Centered GIF" style="display: block; margin: auto;">
+  <img src="https://cdn.discordapp.com/attachments/1059161993828896810/1241863278796472400/68747470733a2f2f73352e657a6769662e636f6d2f746d702f657a6769662d352d353335333661616533632e676966.gif?ex=664bbece&is=664a6d4e&hm=b5e0cf11d0a3762f3db067c204eef7d89bf4358d2c84918995604828778da1db&" alt="Centered GIF" style="display: block; margin: auto;">
 </p>
 
 
