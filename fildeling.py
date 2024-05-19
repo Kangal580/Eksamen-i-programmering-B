@@ -85,6 +85,7 @@ def connect_to_host(host):
 
     # Generate og send clients navn
     client_username = generate_username()
+    print(f"Generated client's username: {client_username}")
     encrypted_username = public_key.encrypt(
         client_username.encode('utf-8'),
         padding.OAEP(
@@ -93,14 +94,14 @@ def connect_to_host(host):
             label=None
         )
     )
+    print(f"Plaintext client's username: {client_username}")
+    print(f"Encrypted client's username: {encrypted_username}")
     client.send(encrypted_username)
-    print(f"Client's encrypted username: {encrypted_username}")
 
     # Modtag og vis serverens navn
     server_username_encrypted = client.recv(256)
     server_username = server_username_encrypted.decode('utf-8')
     print(f"Connected to host. Your username: {client_username}, Host's username: {server_username}")
-
 
     while True:
         file_name = input("Enter the name of the .txt file to request: ")
@@ -112,6 +113,8 @@ def connect_to_host(host):
                 label=None
             )
         )
+        print(f"Plaintext file name to request: {file_name}")
+        print(f"Encrypted file name to request: {encrypted_file_name}")
         client.send(encrypted_file_name)
 
         response = client.recv(1024).decode('utf-8')
@@ -126,6 +129,7 @@ def connect_to_host(host):
 def handle_client(client_socket, address, server_username, private_key):
     print(f"[+] {address} connected.")
     encrypted_client_username = client_socket.recv(256)
+    print(f"Encrypted client username received: {encrypted_client_username}")
     client_username = private_key.decrypt(
         encrypted_client_username,
         padding.OAEP(
@@ -134,13 +138,13 @@ def handle_client(client_socket, address, server_username, private_key):
             label=None
         )
     ).decode('utf-8')
+    print(f"Decrypted client's username: {client_username}")
     client_socket.send(server_username.encode('utf-8'))
-    print(f"Client's username: {client_username}")
-    print(f"Client's encrypted username: {encrypted_client_username}")
 
     while True:
         try:
             encrypted_file_name = client_socket.recv(256)
+            print(f"Encrypted file name received: {encrypted_file_name}")
             file_name = private_key.decrypt(
                 encrypted_file_name,
                 padding.OAEP(
@@ -149,6 +153,8 @@ def handle_client(client_socket, address, server_username, private_key):
                     label=None
                 )
             ).decode('utf-8')
+            print(f"Decrypted file name: {file_name}")
+
             if not file_name:
                 break
 
@@ -160,14 +166,11 @@ def handle_client(client_socket, address, server_username, private_key):
             else:
                 client_socket.send("FILE_NOT_FOUND".encode('utf-8'))
                 print(f"File '{file_name}' not found for {client_username} at {address}.")
-            print(f"Encrypted file name received: {encrypted_file_name}")
-
         except ConnectionResetError:
             break
 
     print(f"[-] {address} disconnected.")
     client_socket.close()
-
 
 # Funktion til at starte serveren
 def start_server(port):
