@@ -21,29 +21,39 @@ Eksamen i Programmering-B
 
 ## FAQ❓
 
-#### Hvad er SikkerTxtDeling?
+#### Q1: Hvad er SikkerTxtDeling?
 
 SikkerTxtDeling er en Python-baseret applikation, der giver brugere mulighed for sikkert at dele tekstfiler ved hjælp af RSA-kryptering.
 
-#### Hvordan sikrer SikkerTxtDeling sikkerheden af mine filer?
+#### Q2: Hvordan sikrer SikkerTxtDeling sikkerheden af mine filer?
 
 SikkerTxtDeling bruger RSA-kryptering til at sikre transmissionen af tekstfiler. Dette sikrer, at kun den tiltænkte modtager med den korrekte private nøgle kan dekryptere og læse filerne.
 
-#### Hvad skal jeg bruge for at køre SikkerTxtDeling?
+#### Q3: Hvad skal jeg bruge for at køre SikkerTxtDeling?
 
 Du skal have Python installeret på dit system sammen med kryptografi-biblioteket. De nødvendige biblioteker kan installeres ved hjælp af requirements.txt filen, der er inkluderet i projektet.
 
-#### Hvordan starter jeg en server for at være host for filer?
+#### Q4: Hvordan starter jeg en server for at være host for filer?
 
 Kør applikationen og vælg 'host' valgmuligheden. Serveren vil begynde at udsende sine detaljer og vente på, at klienter opretter forbindelse.
 
-#### Hvordan opretter jeg forbindelse til en vært for at modtage filer?
+#### Q5: Hvordan opretter jeg forbindelse til en host for at modtage filer?
 
-Kør applikationen og vælg 'connect' valgmuligheden. Applikationen vil lytte efter tilgængelige værter og bede dig om at oprette forbindelse til en.
+Kør applikationen og vælg 'connect' valgmuligheden. Applikationen vil lytte efter tilgængelige hosts og bede dig om at oprette forbindelse til en.
 
-#### Hvad skal jeg gøre, hvis jeg ikke kan finde nogen værter at oprette forbindelse til?
+#### Q6: Hvad skal jeg gøre, hvis jeg ikke kan finde nogen hosts at oprette forbindelse til?
 
 Sørg for, at host serveren kører og udsender sine detaljer. Tjek også dine netværksindstillinger for at sikre, at din enhed kan modtage udsendelsesbeskeder.
+
+#### Q7: Hvorfor kan jeg ikke bruge denne applikation på skolens netværk?
+
+Der kan være flere grunde til, at du ikke kan bruge applikationen på skolens netværk
+    - Netværksrestriktioner: Skolen har muligvis strenge firewall-regler og restriktioner for at forhindre uautoriseret adgang og sikre netværkets sikkerhed.
+    - Blokerede porte: De porte, vi bruger til udsendelse (5001) og hovedforbindelsen (5000), kan være blokeret af netværksadministratorerne.
+    - Administrative tilladelser: Kørsel af serverapplikationer kræver ofte administrative tilladelser, som du måske ikke har på skolens computere eller netværk.
+    - Netværksadresseoversættelse (NAT): Skole netværker bruger tit NAT, hvilket kan forårsage problemer med direkte peer-to-peer forbindelser.
+    - Sikkerhedspolitikker: Skolens IT-politikker kan forbyde brugen af brugerdefinerede netværksapplikationer for at forhindre sikkerhedsrisici.
+    - Udsendelsesproblemer: UDP-udsendelser kan være begrænset eller filtreret af netværksudstyr for at reducere unødvendig trafik.
 
 ![](https://s5.ezgif.com/tmp/ezgif-5-53536aae3c.gif)
 
