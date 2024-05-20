@@ -74,6 +74,8 @@ Der kan være flere grunde til, at du ikke kan bruge applikationen på skolens n
 
  - RSA Algoritmen: For den grundlæggende kryptografiske metode, der muliggør sikker dataoverførsel.
 
+ - I koden bruges Base64-kodning til at sikre, at den krypterede brugernavn bliver korrekt repræsenteret, før den sendes som en del af host oplysningerne.
+
  - Open Source Community: For deres løbende bidrag og støtte, hvilket gør ressourcer og biblioteker tilgængelige for alle udviklere.
 
  - GitHub: For at levere en platform til at dele og samarbejde om kodeprojekter.
